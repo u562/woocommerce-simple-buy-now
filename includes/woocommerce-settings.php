@@ -271,6 +271,41 @@ class WooCommerce_Simple_Buy_Settings_Buy_Now_Settings extends WC_Settings_Page 
 			'id'   => 'woocommerce_simple_buy_hover_colors_end',
 		];
 
+
+		$settings[] = [
+			'name' => esc_html__( 'Dimensions', 'woocommerce-simple-buy-now' ),
+			'type' => 'title',
+			'id'   => 'woocommerce_simple_buy_dimensions',
+		];
+
+		$settings[] = [
+			'name'     => esc_html__( 'Padding', 'woocommerce-simple-buy-now' ),
+			'id'       => 'woocommerce_simple_buy_button_padding',
+			'type'     => 'dimensions',
+		];
+
+		$settings[] = [
+			'type' => 'sectionend',
+			'id'   => 'woocommerce_simple_buy_dimensions_end',
+		];
+
+		$settings[] = [
+			'name' => esc_html__( 'Additional CSS', 'woocommerce-simple-buy-now' ),
+			'type' => 'title',
+			'id'   => 'woocommerce_simple_buy_additional_css',
+		];
+
+		$settings[] = [
+			'name'     => esc_html__( 'CSS code', 'woocommerce-simple-buy-now' ),
+			'id'       => 'woocommerce_simple_buy_button_padding',
+			'type'     => 'textarea',
+		];
+
+		$settings[] = [
+			'type' => 'sectionend',
+			'id'   => 'woocommerce_simple_buy_additional_css_end',
+		];
+
 		return apply_filters( 'woocommerce_quick_buy_customize_settings', $settings );
 	}
 

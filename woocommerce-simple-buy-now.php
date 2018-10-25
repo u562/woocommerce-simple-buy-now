@@ -65,20 +65,6 @@ if ( defined( 'WOO_SIMPLE_BUY_VERSION' ) ) {
 define( 'WOO_SIMPLE_BUY_VERSION', '1.0.6' );
 define( 'WOO_SIMPLE_BUY_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WOO_SIMPLE_BUY_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-/**
- * The code that runs during plugin activation.
- */
-function activate_woocommerce_simple_buy_now() {
-}
-
-/**
- * The code that runs during plugin deactivation.
- */
-function deactivate_woocommerce_simple_buy_now() {
-}
-
-register_activation_hook( __FILE__, 'activate_woocommerce_simple_buy_now' );
-register_deactivation_hook( __FILE__, 'deactivate_woocommerce_simple_buy_now' );
 
 /**
  * Admin notice: Require WooCommerce.
@@ -167,6 +153,7 @@ class WooCommerce_Simple_Buy_Now {
 		}
 
 		add_filter( 'woocommerce_get_settings_pages', [ $this, 'settings_page' ] );
+		add_action( 'woocommerce_admin_field_dimensions', [ $this, 'output_dimensions_field' ] );
 	}
 
 	/**
@@ -495,5 +482,81 @@ class WooCommerce_Simple_Buy_Now {
 			// Remove all products in cart.
 			WC()->cart->empty_cart();
 		}
+	}
+
+	public function output_dimensions_field( $value ) {
+		// Description handling.
+		$field_description = WC_Admin_Settings::get_field_description( $value );
+		$description       = $field_description['description'];
+		$tooltip_html      = $field_description['tooltip_html'];
+		$option_value = (array) WC_Admin_Settings::get_option( $value['id'], $value['default'] );
+		?>
+		<tr valign="top">
+			<th scope="row" class="titledesc">
+				<label for="<?php echo esc_attr( $value['id'] ); ?>"><?php echo esc_html( $value['title'] ); ?> <?php echo $tooltip_html; // WPCS: XSS ok. ?></label>
+			</th>
+			<td class="forminp">
+			<input
+					name="<?php echo esc_attr( $value['id'] ); ?>[top]"
+					id="<?php echo esc_attr( $value['id'] ); ?>"
+					type="number"
+					style="width: 60px;"
+					value="<?php echo esc_attr( $option_value['top'] ); ?>"
+					class="<?php echo esc_attr( $value['class'] ); ?>"
+					placeholder="<?php echo esc_attr( $value['placeholder'] ); ?>"
+					step="1"
+					min="0"
+				/>
+
+			<input
+					name="<?php echo esc_attr( $value['id'] ); ?>[right]"
+					id="<?php echo esc_attr( $value['id'] ); ?>"
+					type="number"
+					style="width: 60px;"
+					value="<?php echo esc_attr( $option_value['right'] ); ?>"
+					class="<?php echo esc_attr( $value['class'] ); ?>"
+					placeholder="<?php echo esc_attr( $value['placeholder'] ); ?>"
+					step="1"
+					min="0"
+				/>
+
+			<input
+					name="<?php echo esc_attr( $value['id'] ); ?>[bottom]"
+					id="<?php echo esc_attr( $value['id'] ); ?>"
+					type="number"
+					style="width: 60px;"
+					value="<?php echo esc_attr( $option_value['bottom'] ); ?>"
+					class="<?php echo esc_attr( $value['class'] ); ?>"
+					placeholder="<?php echo esc_attr( $value['placeholder'] ); ?>"
+					step="1"
+					min="0"
+				/>
+
+			<input
+					name="<?php echo esc_attr( $value['id'] ); ?>[left]"
+					id="<?php echo esc_attr( $value['id'] ); ?>"
+					type="number"
+					style="width: 60px;"
+					value="<?php echo esc_attr( $option_value['left'] ); ?>"
+					class="<?php echo esc_attr( $value['class'] ); ?>"
+					placeholder="<?php echo esc_attr( $value['placeholder'] ); ?>"
+					step="1"
+					min="0"
+				/>
+
+			<select name="<?php echo esc_attr( $value['id'] ); ?>[unit]" style="width: auto;">
+				<option value="px" <?php selected( 'px', $value['id'], true ); ?>>px</option>
+				<option value="em" <?php selected( 'em', $value['id'], true ); ?>>em</option>
+			</select>
+				</br>
+				<span class="description">
+					<span style="display: inline-block; width: 60px;">&nbsp;<?php esc_html_e( 'Top', 'woocommerce-simple-buy-now' ); ?></span>
+					<span style="display: inline-block; width: 60px;">&nbsp;<?php esc_html_e( 'Right', 'woocommerce-simple-buy-now' ); ?></span>
+					<span style="display: inline-block; width: 60px;">&nbsp;<?php esc_html_e( 'Bottom', 'woocommerce-simple-buy-now' ); ?></span>
+					<span style="display: inline-block; width: 60px;">&nbsp;<?php esc_html_e( 'Left', 'woocommerce-simple-buy-now' ); ?></span>
+				<?php echo ( $description ) ? $description : ''; // WPCS: XSS ok. ?>
+			</td>
+		</tr>
+		<?php
 	}
 }
