@@ -485,11 +485,16 @@ class WooCommerce_Simple_Buy_Now {
 	}
 
 	public function output_dimensions_field( $value ) {
+		$units = array(
+			'px' => __( 'px', 'woocommerce-simple-buy-now' ),
+			'em' => __( 'em', 'woocommerce-simple-buy-now' ),
+		);
+
 		// Description handling.
 		$field_description = WC_Admin_Settings::get_field_description( $value );
 		$description       = $field_description['description'];
 		$tooltip_html      = $field_description['tooltip_html'];
-		$option_value = (array) WC_Admin_Settings::get_option( $value['id'], $value['default'] );
+		$option_value = $this->parse_dimensions_option( WC_Admin_Settings::get_option( $value['id'], $value['default'] ) );
 		?>
 		<tr valign="top">
 			<th scope="row" class="titledesc">
@@ -498,7 +503,7 @@ class WooCommerce_Simple_Buy_Now {
 			<td class="forminp">
 			<input
 					name="<?php echo esc_attr( $value['id'] ); ?>[top]"
-					id="<?php echo esc_attr( $value['id'] ); ?>"
+					id="<?php echo esc_attr( $value['id'] ); ?>_top"
 					type="number"
 					style="width: 60px;"
 					value="<?php echo esc_attr( $option_value['top'] ); ?>"
@@ -510,7 +515,7 @@ class WooCommerce_Simple_Buy_Now {
 
 			<input
 					name="<?php echo esc_attr( $value['id'] ); ?>[right]"
-					id="<?php echo esc_attr( $value['id'] ); ?>"
+					id="<?php echo esc_attr( $value['id'] ); ?>_right"
 					type="number"
 					style="width: 60px;"
 					value="<?php echo esc_attr( $option_value['right'] ); ?>"
@@ -522,7 +527,7 @@ class WooCommerce_Simple_Buy_Now {
 
 			<input
 					name="<?php echo esc_attr( $value['id'] ); ?>[bottom]"
-					id="<?php echo esc_attr( $value['id'] ); ?>"
+					id="<?php echo esc_attr( $value['id'] ); ?>_bottom"
 					type="number"
 					style="width: 60px;"
 					value="<?php echo esc_attr( $option_value['bottom'] ); ?>"
@@ -534,7 +539,7 @@ class WooCommerce_Simple_Buy_Now {
 
 			<input
 					name="<?php echo esc_attr( $value['id'] ); ?>[left]"
-					id="<?php echo esc_attr( $value['id'] ); ?>"
+					id="<?php echo esc_attr( $value['id'] ); ?>_left"
 					type="number"
 					style="width: 60px;"
 					value="<?php echo esc_attr( $option_value['left'] ); ?>"
@@ -545,8 +550,11 @@ class WooCommerce_Simple_Buy_Now {
 				/>
 
 			<select name="<?php echo esc_attr( $value['id'] ); ?>[unit]" style="width: auto;">
-				<option value="px" <?php selected( 'px', $value['id'], true ); ?>>px</option>
-				<option value="em" <?php selected( 'em', $value['id'], true ); ?>>em</option>
+				<?php
+				foreach ( $units as $value => $label ) {
+					echo '<option value="' . esc_attr( $value ) . '"' . selected( $option_value['unit'], $value, false ) . '>' . esc_html( $label ) . '</option>';
+				}
+				?>
 			</select>
 				</br>
 				<span class="description">
@@ -558,5 +566,38 @@ class WooCommerce_Simple_Buy_Now {
 			</td>
 		</tr>
 		<?php
+	}
+
+
+	/**
+	 * Parse a dimensions option from the settings API into a standard format.
+	 *
+	 * @param mixed $raw_value Value stored in DB.
+	 * @return array Nicely formatted array with number and unit values.
+	 */
+	public function parse_dimensions_option( $raw_value ) {
+		$units = array(
+			'px' => __( 'px', 'woocommerce-simple-buy-now' ),
+			'em' => __( 'em', 'woocommerce-simple-buy-now' ),
+		);
+
+		$value = wp_parse_args( (array) $raw_value, array(
+			'top'    => '',
+			'right'  => '',
+			'bottom' => '',
+			'left'   => '',
+			'unit'   => 'px',
+		) );
+
+		$value['top']    = ! empty( $value['top'] ) ? absint( $value['top'] ) : '';
+		$value['right']  = ! empty( $value['right'] ) ? absint( $value['right'] ) : '';
+		$value['bottom'] = ! empty( $value['bottom'] ) ? absint( $value['bottom'] ) : '';
+		$value['left']   = ! empty( $value['left'] ) ? absint( $value['left'] ) : '';
+
+		if ( ! in_array( $value['unit'], array_keys( $units ), true ) ) {
+			$value['unit'] = 'px';
+		}
+
+		return $value;
 	}
 }

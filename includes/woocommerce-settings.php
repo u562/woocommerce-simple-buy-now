@@ -285,6 +285,12 @@ class WooCommerce_Simple_Buy_Settings_Buy_Now_Settings extends WC_Settings_Page 
 		];
 
 		$settings[] = [
+			'name'     => esc_html__( 'Margin', 'woocommerce-simple-buy-now' ),
+			'id'       => 'woocommerce_simple_buy_button_margin',
+			'type'     => 'dimensions',
+		];
+
+		$settings[] = [
 			'type' => 'sectionend',
 			'id'   => 'woocommerce_simple_buy_dimensions_end',
 		];
